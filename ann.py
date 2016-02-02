@@ -7,6 +7,6 @@ bc_nn = Classifier(
     layers=[
         Layer("Sigmoid", units=100),
         Layer("Softmax")])
-scores = cross_validation.cross_val_score(bc_nn, bcData, bcTarget, cv=10)
+scores = cross_validation.cross_val_score(bc_nn, bc_data, bc_target, cv=10)
 print scores
 

@@ -2,23 +2,17 @@ from sklearn import datasets
 from sklearn.preprocessing import Imputer
 import numpy as np
 
-<<<<<<< HEAD
 _breast_cancer_path = 'datasets/wisconsin/breast-cancer-wisconsin.data'
 _vowel_path = 'datasets/vowel/vowel.train'
 _vowel_test_path = 'datasets/vowel/vowel.test'
-=======
-_breast_cancer_path = 'wisconsin/breast-cancer-wisconsin.data'
-_vowel_path = 'vowel/vowel.train'
-_vowel_test_path = 'vowel/vowel.test'
->>>>>>> eec47cb9b87b558025e69ae7d5993a4ee3bc6b4c
 
-def _isNan(string):
+def _is_nan(string):
     if string is not '?':
         return int(string)
     else:
         return np.nan 
 
-def load_breast_cancer()
+def load_breast_cancer():
     """Load and return the breast cancer wisconsin dataset (classification).
     The breast cancer dataset is a classic and very easy binary classification
     dataset.
@@ -32,8 +26,8 @@ def load_breast_cancer()
     downloaded from:
     http://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Original)
     """
-    cnv = {6: lambda s: _isNan(s)}
-    bc_data = np.loadtxt('wisconsin/breast-cancer-wisconsin.data', delimiter=',', converters=cnv)
+    cnv = {6: lambda s: _is_nan(s)}
+    bc_data = np.loadtxt(_breast_cancer_path, delimiter=',', converters=cnv)
     bc_data_malignant = bc_data[bc_data[:,10] == 4, :]
     bc_data_benign = bc_data[bc_data[:,10] == 2, :]
     
@@ -75,5 +69,4 @@ def load_vowel_test():
     X = vowel_data[:, -10:]
     y = vowel_data[:, 1].astype(int)
     return (X, y)
-
 
