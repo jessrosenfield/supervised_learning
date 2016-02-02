@@ -2,9 +2,15 @@ from sklearn import datasets
 from sklearn.preprocessing import Imputer
 import numpy as np
 
+<<<<<<< HEAD
 _breast_cancer_path = 'datasets/wisconsin/breast-cancer-wisconsin.data'
 _vowel_path = 'datasets/vowel/vowel.train'
 _vowel_test_path = 'datasets/vowel/vowel.test'
+=======
+_breast_cancer_path = 'wisconsin/breast-cancer-wisconsin.data'
+_vowel_path = 'vowel/vowel.train'
+_vowel_test_path = 'vowel/vowel.test'
+>>>>>>> eec47cb9b87b558025e69ae7d5993a4ee3bc6b4c
 
 def _isNan(string):
     if string is not '?':
