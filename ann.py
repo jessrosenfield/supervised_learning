@@ -34,7 +34,8 @@ def bc_ann_crossval_numitr():
     ax.set_ylabel('Error')
     plt.savefig('/tmp/supervised-learning/bc-ann-crossval-results.png')
 
-def bc_ann_numtrain(numitr):
+def bc_ann_train_size(numitr):
+    print "---bc---"
     portions = np.arange(.1, 1, .1)
     splits = []
     bc_nn = Classifier(
@@ -42,7 +43,7 @@ def bc_ann_numtrain(numitr):
             Layer("Sigmoid", units=100),
             Layer("Softmax")])
     for test_size in portions:
-        X_train, X_test, y_train, y_test = cross_validation.test_train_split(bc_data, bc_target, test_size=test_size)
+        X_train, X_test, y_train, y_test = cross_validation.train_test_split(bc_data, bc_target, test_size=test_size)
         bc_nn.fit(X_train, y_train)
         score = bc_nn.score(X_test, y_test)
         print test_size, score
@@ -70,3 +71,18 @@ def v_ann_crossval_numitr():
     ax.set_xlabel('Iterations')
     ax.set_ylabel('Error')
     plt.savefig('/tmp/supervised-learning/v-ann-crossval-results.png')
+
+
+def v_ann_train_size(numitr):
+    print "---v---"
+    portions = np.arange(.1, 1, .1)
+    splits = []
+    v_nn = Classifier(
+        layers=[
+            Layer("Sigmoid", units=100),
+            Layer("Softmax")])
+    for test_size in portions:
+        X_train, X_test, y_train, y_test = cross_validation.train_test_split(v_data, v_target, test_size=test_size)
+        v_nn.fit(X_train, y_train)
+        score = v_nn.score(X_test, y_test)
+        print test_size, score

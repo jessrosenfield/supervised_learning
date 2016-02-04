@@ -1,4 +1,5 @@
 import ann
 
-ann.v_ann_crossval_numitr()
+ann.bc_ann_train_size(7750)
+ann.v_ann_train_size(14750)
 
