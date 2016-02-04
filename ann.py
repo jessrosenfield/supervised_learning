@@ -7,9 +7,11 @@ import data_util as util
 import matplotlib.pyplot as plt
 import numpy as np
 
+bc_data, bc_target = util.load_breast_cancer()
+v_data, v_target = util.load_vowel()
+
 def bc_ann_crossval_numitr():
     print "---breast-cancer-wisconsin---"
-    bc_data, bc_target = util.load_breast_cancer()
     bc_nn = Classifier(
         layers=[
             Layer("Sigmoid", units=100),
@@ -32,9 +34,21 @@ def bc_ann_crossval_numitr():
     ax.set_ylabel('Error')
     plt.savefig('/tmp/supervised-learning/bc-ann-crossval-results.png')
 
+def bc_ann_numtrain(numitr):
+    portions = np.arange(.1, 1, .1)
+    splits = []
+    bc_nn = Classifier(
+        layers=[
+            Layer("Sigmoid", units=100),
+            Layer("Softmax")])
+    for test_size in portions:
+        X_train, X_test, y_train, y_test = cross_validation.test_train_split(bc_data, bc_target, test_size=test_size)
+        bc_nn.fit(X_train, y_train)
+        score = bc_nn.score(X_test, y_test)
+        print test_size, score
+
 def v_ann_crossval_numitr():
     print "---vowel---"
-    v_data, v_target = util.load_vowel()
     v_nn = Classifier(
         layers=[
             Layer("Sigmoid", units=100),
