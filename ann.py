@@ -37,12 +37,11 @@ def bc_ann_crossval_numitr():
 def bc_ann_train_size(numitr):
     print "---bc---"
     portions = np.arange(.1, 1, .1)
-    splits = []
-    bc_nn = Classifier(
+    for test_size in portions:
+        bc_nn = Classifier(
         layers=[
             Layer("Sigmoid", units=100),
             Layer("Softmax")])
-    for test_size in portions:
         X_train, X_test, y_train, y_test = cross_validation.train_test_split(bc_data, bc_target, test_size=test_size)
         bc_nn.fit(X_train, y_train)
         score = bc_nn.score(X_test, y_test)
@@ -76,12 +75,11 @@ def v_ann_crossval_numitr():
 def v_ann_train_size(numitr):
     print "---v---"
     portions = np.arange(.1, 1, .1)
-    splits = []
-    v_nn = Classifier(
-        layers=[
-            Layer("Sigmoid", units=100),
-            Layer("Softmax")])
     for test_size in portions:
+        v_nn = Classifier(
+            layers=[
+                Layer("Sigmoid", units=100),
+                Layer("Softmax")])
         X_train, X_test, y_train, y_test = cross_validation.train_test_split(v_data, v_target, test_size=test_size)
         v_nn.fit(X_train, y_train)
         score = v_nn.score(X_test, y_test)
