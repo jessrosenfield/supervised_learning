@@ -1,5 +1,4 @@
 from sklearn.cross_validation import cross_val_score
-from sklearn.datasets import load_iris
 from sklearn.ensemble import AdaBoostClassifier
 
 import data_util as util
