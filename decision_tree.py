@@ -1,29 +1,86 @@
-import numpy as np
-from sklearn.grid_search import GridSearchCV
-from sklearn.metrics import classification_report
-from sklearn.tree import DecisionTreeClassifier
+from IPython.display import Image
+import matplotlib.pyplot as plt
 from sklearn import cross_validation
+from sklearn.externals.six import StringIO
+from sklearn.feature_selection import RFECV
 
 import data_util as util
+import numpy as np
+import pydot
+import sklearn.tree as tree
 
-bc_data, bc_target = util.load_breast_cancer()
-v_data, v_target = util.load_vowel()
-param_grid = {'criterion': ["gini", "entropy"]}
+bc_data_train, bc_data_test, bc_target_train, bc_target_test = util.load_breast_cancer()
+bc_feature_names = []
+v_data_train, v_data_test, v_target_train, v_target_test = util.load_vowel()
+DEPTHS = np.arange(1, 10)
 
-def bc_dc_gridsearch():
-  print "---bc---"
-  bc_dc = DecisionTreeClassifier()
-  clf = GridSearchCV(bc_dc, param_grid, n_jobs=-1, cv=10, verbose=2)
-  clf.fit(bc_data, bc_target)
-  print "Best estimator: ", clf.best_estimator_
-  print "Best parameters set found: ", clf.best_params_
-  print clf.grid_scores_
-  
-def v_dc_gridsearch():
-  print "---v---"
-  v_dc = DecisionTreeClassifier()
-  clf = GridSearchCV(v_dc, param_grid, n_jobs=-1, cv=10, verbose=2)
-  clf.fit(v_data, v_target)
-  print "Best estimator: ", clf.best_estimator_
-  print "Best parameters set found: ", clf.best_params_
-  print clf.grid_scores_
+def decision_tree():
+    print "---bc---"
+    clf = tree.DecisionTreeClassifier(criterion="gini")
+
+    rfecv = RFECV(clf, cv=10)
+
+    _decision_tree(clf, bc_data_train, bc_data_test, bc_target_train, bc_target_test, "bc_gini")
+    for depth in DEPTHS:
+        clf = tree.DecisionTreeClassifier(criterion="gini", max_depth=depth)
+        _decision_tree(clf, bc_data_train, bc_data_test, bc_target_train, bc_target_test, "bc_gini" + str(depth))
+
+    clf = tree.DecisionTreeClassifier(criterion="entropy")
+    _decision_tree(clf, bc_data_train, bc_data_test, bc_target_train, bc_target_test, "bc_entropy")
+    for depth in DEPTHS:
+        clf = tree.DecisionTreeClassifier(criterion="entropy", max_depth=depth)
+        _decision_tree(clf, bc_data_train, bc_data_test, bc_target_train, bc_target_test, "bc_entropy" + str(depth))
+
+    rfecv.fit(bc_data_train, bc_target_train)
+    print rfecv.support_
+    print rfecv.ranking_
+    print rfecv.score(bc_data_test, bc_target_test)
+    plt.figure()
+    plt.xlabel("Number of features selected")
+    plt.ylabel("Cross validation score (nb of correct classifications)")
+    plt.plot(range(1, len(rfecv.grid_scores_) + 1), rfecv.grid_scores_)
+    plt.show()
+
+
+    print "---v---"
+    clf = tree.DecisionTreeClassifier(criterion="gini")
+
+    rfecv = RFECV(clf, cv=10)
+
+    _decision_tree(clf, bc_data_train, bc_data_test, bc_target_train, bc_target_test, "v_gini")
+    for depth in DEPTHS:
+        clf = tree.DecisionTreeClassifier(criterion="gini", max_depth=depth)
+        _decision_tree(clf, bc_data_train, bc_data_test, bc_target_train, bc_target_test, "v_gini" + str(depth))
+
+    clf = tree.DecisionTreeClassifier(criterion="entropy")
+    _decision_tree(clf, bc_data_train, bc_data_test, bc_target_train, bc_target_test, "v_entropy")
+    for depth in DEPTHS:
+        clf = tree.DecisionTreeClassifier(criterion="entropy", max_depth=depth)
+        _decision_tree(clf, bc_data_train, bc_data_test, bc_target_train, bc_target_test, "v_entropy" + str(depth))
+
+    rfecv.fit(bc_data_train, bc_target_train)
+    print rfecv.support_
+    print rfecv.ranking_
+    print rfecv.score(bc_data_test, bc_target_test)
+    plt.figure()
+    plt.xlabel("Number of features selected")
+    plt.ylabel("Cross validation score (nb of correct classifications)")
+    plt.plot(range(1, len(rfecv.grid_scores_) + 1), rfecv.grid_scores_)
+    plt.show()
+
+
+
+def _decision_tree(clf, data, data_test, target, target_test, name):
+    clf.fit(bc_data_train, bc_target_train)
+    train_score = clf.score(bc_data_train, bc_target_train)
+    test_score = clf.score(bc_data_test, bc_target_test)
+    print name, train_score, test_score
+    dot_data = StringIO()
+    tree.export_graphviz(clf, out_file=dot_data)
+    graph = pydot.graph_from_dot_data(dot_data.getvalue())
+    with open("output/" + name + ".png", 'w') as f:
+        f.write(graph.create_png())
+
+
+if __name__ == "__main__":
+    decision_tree()
