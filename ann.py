@@ -14,28 +14,24 @@ PORTIONS = np.arange(.1, 1.1, .1)
 ITERATIONS = np.arange(250, 20250, 250)
 BC_ITER = 7750
 V_ITER = 14750
-ann_n_iter()
-ann_train_size()
 
 def ann_n_iter():
     print "n_iter"
     print "---bc---"
     Parallel(n_jobs=-1)(
-        delayed(ann_n_iter)(
+        delayed(_ann_n_iter)(
             bc_data_train,
             bc_data_test,
             bc_target_train,
             bc_target_test,
-            BC_ITER,
             n_iter) for n_iter in ITERATIONS)
     print "---v---"
     Parallel(n_jobs=-1)(
-        delayed(ann_n_iter)(
+        delayed(_ann_n_iter)(
             v_data_train,
             v_data_test,
             v_target_train,
             v_target_test,
-            V_ITER,
             n_iter) for n_iter in ITERATIONS)
 
 
@@ -45,10 +41,10 @@ def _ann_n_iter(data, data_test, target, target_test, n_iter):
             Layer("Sigmoid", units=100),
             Layer("Softmax")],
         n_iter=n_iter)
-    train_score = np.mean(cross_validation.cross_val_score(nn, X_train, y_train, cv=10))
-    nn.fit(X_train, y_train)
-    test_score = nn.score(X_test, y_test)
-    print train_size, train_score, test_score
+    train_score = np.mean(cross_validation.cross_val_score(nn, data, target, cv=10))
+    nn.fit(data, target)
+    test_score = nn.score(data_test, target_test)
+    print n_iter, train_score, test_score
 
 
 def ann_train_size():
@@ -84,3 +80,4 @@ def _ann_train_size(data, data_test, target, target_test, n_iter, train_size):
     nn.fit(X_train, y_train)
     test_score = nn.score(X_test, y_test)
     print train_size, train_score, test_score
+

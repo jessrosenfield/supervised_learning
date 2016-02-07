@@ -1,4 +1,4 @@
 import ann
 
-ann.ann_test_size_test()
+ann.ann_n_iter()
 
