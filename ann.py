@@ -80,4 +80,5 @@ def _ann_train_size(data, data_test, target, target_test, train_size):
     test_score = nn.score(data_test, target_test)
     print train_size, train_score, test_score
 
-ann_train_size()
+if __name__ == "__main__":
+    ann_train_size()
