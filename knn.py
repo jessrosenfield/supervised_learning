@@ -44,15 +44,19 @@ def knn_train_size():
     print "---bc---"
     Parallel(n_jobs=-1)(
         delayed(_knn_train_size)(
-            bc_data_train, bc_data_test,
-            bc_target,
+            bc_data_train,
+            bc_data_test,
+            bc_target_train,
+            bc_target_test,
             3,
             train_size) for train_size in PORTIONS)
     print "---v---"
     Parallel(n_jobs=-1)(
         delayed(_knn_train_size)(
-            v_data,
-            v_target,
+            v_data_train,
+            v_data_test,
+            v_target_train,
+            v_target_test,
             1,
             train_size) for train_size in PORTIONS)
 
@@ -61,12 +65,12 @@ def _knn_train_size(data, data_test, target, target_test, n_neighbors, train_siz
     knn = KNeighborsClassifier(weights='distance', n_neighbors=n_neighbors)
     if train_size < 1:
         X_train, _, y_train, _ = cross_validation.train_test_split(
-            data, target, train_size=test_size, stratify=y_train)
+            data, target, train_size=train_size, stratify=target)
     else:
         X_train, y_train = data, target
     train_score = np.mean(cross_validation.cross_val_score(knn, X_train, y_train, cv=10))
     knn.fit(X_train, y_train)
-    test_score = nn.score(X_test, y_test)
+    test_score = knn.score(data_test, target_test)
     print train_size, train_score, test_score
 
 knn_train_size()
