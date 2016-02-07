@@ -12,8 +12,6 @@ v_data_train, v_data_test, v_target_train, v_target_test = util.load_vowel()
 
 PORTIONS = np.arange(.1, 1.1, .1)
 ITERATIONS = np.arange(250, 20250, 250)
-BC_ITER = 7750
-V_ITER = 14750
 
 def ann_n_iter():
     print "n_iter"
@@ -51,33 +49,35 @@ def ann_train_size():
     print "train_size"
     print "---bc---"
     Parallel(n_jobs=-1)(
-        delayed(ann_train_size)(
-            bc_data_train, bc_data_test,
-            bc_target,
-            BC_ITER,
-            test_size) for test_size in PORTIONS)
+        delayed(_ann_train_size)(
+            bc_data_train,
+            bc_data_test,
+            bc_target_train,
+            bc_target_test,
+            train_size) for train_size in PORTIONS)
     print "---v---"
     Parallel(n_jobs=-1)(
-        delayed(ann_train_size)(
-            v_data,
-            v_target,
-            V_ITER,
-            test_size) for test_size in PORTIONS)
+        delayed(_ann_train_size)(
+            v_data_train,
+            v_data_test,
+            v_target_train,
+            v_target_test,
+            train_size) for train_size in PORTIONS)
 
 
-def _ann_train_size(data, data_test, target, target_test, n_iter, train_size):
+def _ann_train_size(data, data_test, target, target_test, train_size):
     nn = Classifier(
         layers=[
             Layer("Sigmoid", units=100),
-            Layer("Softmax")],
-        n_iter=n_iter)
+            Layer("Softmax")])
     if train_size < 1:
         X_train, _, y_train, _ = cross_validation.train_test_split(
-            data, target, train_size=test_size, stratify=y_train)
+            data, target, train_size=train_size, stratify=target)
     else:
         X_train, y_train = data, target
     train_score = np.mean(cross_validation.cross_val_score(nn, X_train, y_train, cv=10))
     nn.fit(X_train, y_train)
-    test_score = nn.score(X_test, y_test)
+    test_score = nn.score(data_test, target_test)
     print train_size, train_score, test_score
 
+ann_train_size()
