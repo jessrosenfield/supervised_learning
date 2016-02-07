@@ -7,27 +7,35 @@ import data_util as util
 import matplotlib.pyplot as plt
 import numpy as np
 
-print "---bc---"
-bc_data, bc_target = util.load_breast_cancer()
-bc_knn = KNeighborsClassifier(weights='distance', n_jobs=-1)
-n_neighbors = np.arange(1, 11)
-clf = GridSearchCV(bc_knn, dict(n_neighbors=n_neighbors), n_jobs=-1, cv=10, verbose=2)
-clf.fit(bc_data, bc_target)
-print "Best parameters: ", clf.best_params_
-params = []
-error = []
-for gs in clf.grid_scores_:
-    print gs[0]['n_neighbors'], gs[1]
-print "---v---"
-v_data, v_target = util.load_vowel()
-v_knn = KNeighborsClassifier(weights='distance', n_jobs=-1)
-clr = GridSearchCV(v_knn, dict(n_neighbors=n_neighbors), n_jobs=-1, cv=10, verbose=2)
-clf.fit(v_data, v_target)
-print "Best parameters: ", clf.best_params_
-params = []
-error = []
-for gs in clf.grid_scores_:
-    print gs[0]['n_neighbors'], gs[1]
-v_data, v_target = util.load_vowel()
+K_NEIGHBORS = np.arange(1, 11)
+bc_data_train, bc_data_test, bc_target_train, bc_target_test = util.load_breast_cancer()
+v_data_train, v_data_test, v_target_train, v_target_test = util.load_vowel()
+
+def knn_neighbors():
+    print "knn_k_neighbors"
+    print "---bc---"
+    Parallel(n_jobs=-1)(
+        delayed(_knn_neighbors)(
+            bc_data_train,
+            bc_data_test,
+            bc_target_train,
+            bc_target_test,
+            n_neighbors) for n_neighbors in K_NEIGHBORS)
+    print "---v---"
+    Parallel(n_jobs=-1)(
+        delayed(_knn_neighbors)(
+            v_data_train,
+            v_data_test,
+            v_target_train,
+            v_target_test,
+            n_neighbors) for n_neighbors in K_NEIGHBORS)
 
 
+def _knn_neighbors(data, data_test, target, target_test, n_iter):
+    knn = KNeighborsClassifier(weights='distance', n_jobs=-1)
+    train_score = np.mean(cross_validation.cross_val_score(knn, data, target, cv=10))
+    knn.fit(data, target)
+    test_score = knn.score(data_test, target_test)
+    print n_iter, train_score, test_score
+
+knn_neighbors()
