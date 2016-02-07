@@ -1,6 +1,5 @@
+from joblib import Parallel, delayed
 from sklearn import cross_validation
-from sklearn.grid_search import GridSearchCV
-from sklearn.metrics import classification_report
 from sklearn.neighbors import KNeighborsClassifier
 
 import data_util as util
@@ -31,11 +30,11 @@ def knn_neighbors():
             n_neighbors) for n_neighbors in K_NEIGHBORS)
 
 
-def _knn_neighbors(data, data_test, target, target_test, n_iter):
-    knn = KNeighborsClassifier(weights='distance', n_jobs=-1)
+def _knn_neighbors(data, data_test, target, target_test, n_neighbors):
+    knn = KNeighborsClassifier(weights='distance', n_neighbors=n_neighbors)
     train_score = np.mean(cross_validation.cross_val_score(knn, data, target, cv=10))
     knn.fit(data, target)
     test_score = knn.score(data_test, target_test)
-    print n_iter, train_score, test_score
+    print n_neighbors, train_score, test_score
 
 knn_neighbors()
