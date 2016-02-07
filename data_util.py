@@ -67,7 +67,7 @@ def load_vowel():
     """
     train = _load_vowel_train()
     test = _load_vowel_test()
-    (train[0], test[0], train[1], test[1])
+    return (train[0], test[0], train[1], test[1])
 
 
 def _load_vowel_train():
