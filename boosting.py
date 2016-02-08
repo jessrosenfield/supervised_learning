@@ -12,17 +12,17 @@ ESTIMATORS = np.arange(1, 101, 1)
 def boosting():
     print "---bc---"
     for n_estimators in ESTIMATORS:
-        _boosting(bc_data_train, bc_target_train, bc_data_test, bc_target_test, n_estimators)
+        _boosting(bc_data_train, bc_data_test, bc_target_train, bc_target_test, n_estimators)
     print "---v---"
     for n_estimators in ESTIMATORS:
-        _boosting(v_data_train, v_target_train, v_data_test, v_target_test, n_estimators)
+        _boosting(v_data_train, v_data_test, v_target_train, v_target_test, n_estimators)
 
 
 def _boosting(data, data_test, target, target_test, n_estimators):
     clf = AdaBoostClassifier(n_estimators=n_estimators)
-    clf.fit(bc_data_train, bc_target_train)
-    train_score = clf.score(bc_data_train, bc_target_train)
-    test_score = clf.score(bc_data_test, bc_target_test)
+    clf.fit(data, target)
+    train_score = clf.score(data, target)
+    test_score = clf.score(data_test, target_test)
     print n_estimators, train_score, test_score
 
 
