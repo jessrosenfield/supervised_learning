@@ -47,21 +47,21 @@ def decision_tree():
 
     rfecv = RFECV(clf, cv=10)
 
-    _decision_tree(clf, bc_data_train, bc_data_test, bc_target_train, bc_target_test, "v_gini")
+    _decision_tree(clf, v_data_train, v_data_test, v_target_train, v_target_test, "v_gini")
     for depth in DEPTHS:
         clf = tree.DecisionTreeClassifier(criterion="gini", max_depth=depth)
-        _decision_tree(clf, bc_data_train, bc_data_test, bc_target_train, bc_target_test, "v_gini" + str(depth))
+        _decision_tree(clf, v_data_train, v_data_test, v_target_train, v_target_test, "v_gini" + str(depth))
 
     clf = tree.DecisionTreeClassifier(criterion="entropy")
-    _decision_tree(clf, bc_data_train, bc_data_test, bc_target_train, bc_target_test, "v_entropy")
+    _decision_tree(clf, v_data_train, v_data_test, v_target_train, v_target_test, "v_entropy")
     for depth in DEPTHS:
         clf = tree.DecisionTreeClassifier(criterion="entropy", max_depth=depth)
-        _decision_tree(clf, bc_data_train, bc_data_test, bc_target_train, bc_target_test, "v_entropy" + str(depth))
+        _decision_tree(clf, v_data_train, v_data_test, v_target_train, v_target_test, "v_entropy" + str(depth))
 
-    rfecv.fit(bc_data_train, bc_target_train)
+    rfecv.fit(v_data_train, v_target_train)
     print rfecv.support_
     print rfecv.ranking_
-    print rfecv.score(bc_data_test, bc_target_test)
+    print rfecv.score(v_data_test, v_target_test)
     plt.figure()
     plt.xlabel("Number of features selected")
     plt.ylabel("Cross validation score (nb of correct classifications)")
@@ -71,14 +71,14 @@ def decision_tree():
 
 
 def _decision_tree(clf, data, data_test, target, target_test, name):
-    clf.fit(bc_data_train, bc_target_train)
-    train_score = clf.score(bc_data_train, bc_target_train)
-    test_score = clf.score(bc_data_test, bc_target_test)
+    clf.fit(data, target)
+    train_score = clf.score(data, target)
+    test_score = clf.score(data_test, target_test)
     print name, train_score, test_score
     dot_data = StringIO()
     tree.export_graphviz(clf, out_file=dot_data)
     graph = pydot.graph_from_dot_data(dot_data.getvalue())
-    with open("output/" + name + ".png", 'w') as f:
+    with open("output/dt-pics/" + name + ".png", 'w') as f:
         f.write(graph.create_png())
 
 
