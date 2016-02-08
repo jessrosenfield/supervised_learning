@@ -82,3 +82,4 @@ def _ann_train_size(data, data_test, target, target_test, train_size):
 
 if __name__ == "__main__":
     ann_train_size()
+    ann_n_iter()

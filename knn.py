@@ -58,7 +58,7 @@ def knn_train_size():
             v_target_train,
             v_target_test,
             1,
-            train_size) for train_size in PORTIONS)
+            train_size) for train_size in PORTIONS if train_size > .1)
 
 
 def _knn_train_size(data, data_test, target, target_test, n_neighbors, train_size):
@@ -73,4 +73,8 @@ def _knn_train_size(data, data_test, target, target_test, n_neighbors, train_siz
     test_score = knn.score(data_test, target_test)
     print train_size, train_score, test_score
 
-knn_train_size()
+
+if __name__ == "__main__":
+    knn_neighbors()
+    knn_train_size()
+
